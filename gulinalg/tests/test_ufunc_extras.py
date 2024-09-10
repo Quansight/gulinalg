@@ -19,7 +19,7 @@ except ImportError:
     izip = zip
 
 import numpy as np
-from numpy.testing import TestCase, assert_allclose, run_module_suite
+from numpy.testing import TestCase, assert_allclose
 import gulinalg
 from gulinalg.testing import assert_allclose_with_nans
 
@@ -170,5 +170,3 @@ class TestMultiply4(UfuncTestCase, TestCase):
 class TestMultiply4Add(UfuncTestCase, TestCase):
     _test = [gulinalg.multiply4_add, lambda x,y,z,u,v: (x*y)*(z*u)+v]
 
-if __name__ == '__main__':
-    run_module_suite()

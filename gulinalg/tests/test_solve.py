@@ -6,7 +6,7 @@ from __future__ import print_function
 from itertools import product
 from unittest import TestCase, skipIf
 import numpy as np
-from numpy.testing import run_module_suite, assert_allclose
+from numpy.testing import assert_allclose
 from pkg_resources import parse_version
 import gulinalg
 
@@ -302,6 +302,3 @@ class TestCholeskySolve(TestCase):
                 rtol = atol = 1e-12
             assert_allclose(x, x_sol, rtol=rtol, atol=atol)
 
-
-if __name__ == '__main__':
-    run_module_suite()

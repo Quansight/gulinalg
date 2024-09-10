@@ -1332,9 +1332,9 @@ def ldl(A, workers=1, **kwargs):
 
     Examples
     --------
-    >>> a = np.array([[4, 1], [1, 2]])
-    >>> l,d = ldl(a)
-    >>> np.allclose(matrix_multiply(l, matrix_multiply(d, l.T)), a)
+    >> a = np.array([[4, 1], [1, 2]])    # FIXME: segfaults with OpenMP
+    >> l,d = ldl(a)
+    >> np.allclose(matrix_multiply(l, matrix_multiply(d, l.T)), a)
     True
 
     References

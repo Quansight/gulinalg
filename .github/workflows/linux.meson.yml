@@ -1,0 +1,55 @@
+name: Linux conda MKL
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test_meson:
+    name: build and run tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        numpy-version: ["", "==1.26.4", "==1.24.4", "==1.22.4"]
+
+    steps:
+    - uses: actions/checkout@v4.1.1
+      with:
+        submodules: recursive
+
+    - name: Setup Conda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+        channels: conda-forge
+        channel-priority: true
+        activate-environment: gulinalg
+        use-only-tar-bz2: false
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
+        use-mamba: true
+
+    - name: Update Conda Environment
+      run: mamba env update -n gulinalg -f environment.yml
+
+    - name: Build and test gulinalg
+      shell: bash -l {0}
+      run: |
+        conda activate gulinalg
+        pip install numpy meson meson-python ninja mkl mkl-devel
+        mamba list
+
+        # build
+        pip install . --no-build-isolation -v  -Csetup-args="-Dopenmp=gnu" -Csetup-args="-Dblas=mkl"
+
+        # test
+        pip install numpy${{ matrix.numpy-version }}
+        cd /tmp
+        python -c'import numpy; print(f"{numpy.__version__ = }")'
+        OMP_NUM_THREADS=2 python -c'import gulinalg as g; g.test(verbosity=2)'
+

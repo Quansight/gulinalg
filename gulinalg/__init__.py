@@ -117,6 +117,4 @@ from ._impl import STRICT_FP
 
 from .testing import test
 
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
+from ._impl import __version__

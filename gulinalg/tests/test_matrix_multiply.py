@@ -7,8 +7,9 @@ is rather complex.
 
 from __future__ import print_function
 from unittest import TestCase, skipIf, skip
+import os
 import numpy as np
-from numpy.testing import run_module_suite, assert_allclose
+from numpy.testing import assert_allclose
 from pkg_resources import parse_version
 import gulinalg
 
@@ -437,6 +438,15 @@ class TestWithCopy(TestCase):
         ref = np.dot(a,b)
         assert_allclose(res, ref)
 
+    @skipIf(os.environ.get('GULINALG_I32_TEST') is None,
+                           reason="needs 32gb; define the env var to run.")
+    def test_i32(self):
+        """Test matrix sizes > int32. Requires > 32Gb memory."""
+        a = np.ones((8, 2**28))
+        b = np.ones((2**28, 8))
+        c = gulinalg.matrix_multiply(a, b)
+        assert_allclose(c, np.ones((8, 8)) * 2**28)
+
 
 # Some simple tests showing that the gufunc stuff works
 class TestVector(TestCase):
@@ -501,5 +511,3 @@ class TestMatvecNoCopy(TestCase):
         ref = np.dot(a,b)
         assert_allclose(res, ref)
 
-if __name__ == '__main__':
-    run_module_suite()

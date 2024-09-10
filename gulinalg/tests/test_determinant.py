@@ -4,7 +4,7 @@ Tests determinant functions.
 
 from unittest import TestCase, skipIf
 import numpy as np
-from numpy.testing import run_module_suite, assert_allclose
+from numpy.testing import assert_allclose
 from pkg_resources import parse_version
 import gulinalg
 
@@ -54,6 +54,3 @@ class TestSlogdet(TestCase):
             assert_allclose(det_ref, det, rtol=1e-6, atol=1e-12)
             assert_allclose(det_ref, sign * np.exp(logdet), rtol=1e-6, atol=1e-12)
 
-
-if __name__ == '__main__':
-    run_module_suite()

@@ -153,7 +153,7 @@ def dotc1d(a, b, workers=1, **kwargs):
     --------
     >>> a = np.arange(1,5).reshape(2,2)
     >>> b = np.arange(1,8,2).reshape(2,2)
-    >>> res = inner1d(a,b)
+    >>> res = inner1d(a, b)
     >>> res.shape == (2,)
     True
     >>> print (res)

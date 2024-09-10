@@ -1,7 +1,65 @@
-gulinalg
+gulinalg 
 ========
 
 Linear algebra functions as Generalized Ufuncs.
+
+
+Uses ILP64 (64-bit) LAPACK from MKL or OpenBLAS, has optional OpenMP support
+to parallelize the outer gufunc loop via the `workers` argument.
+
+Build the package
+--------------------
+
+To build with MKL, do
+
+```
+$ pip install numpy meson meson-python ninja
+$ pip install mkl mkl-devel
+$ pip install . --no-build-isolation -Csetup-args='-Dopenmp=gnu' -Csetup-args='-Dblas=mkl'
+```
+
+To disable the OpenMP support, remove `-Csetup-args='-Dopenmp=gnu'` from the
+pip invocation.
+
+To build with OpenBLAS, install `scipy-openblas64` instead of MKL,
+
+```
+$ pip install scipy-openblas64   # instead of mkl mkl-devel
+```
+
+generate the `pkg-config` file,
+
+```
+$ python -c'import scipy_openblas64 as sc; print(sc.get_pkg_config())' > openblas.pc
+$ export PKG_CONFIG_PATH=$PWD
+```
+
+and build the package
+
+```
+$ pip install . --no-build-isolation -Csetup-args='-Dopenmp=gnu' -Csetup-args='-Dblas=scipy-openblas64'
+```
+
+Test the package
+----------------
+
+```
+$ python -P -c'import gulinalg as g; g.test(verbosity=2)'
+```
+
+or use the standard `pytest` invocations.
+
+
+--------------------------------------------------------------------------------
+
+
+Below is the documentation for the older version of the package (v0.1.6).
+=========================================================================
+
+This version is using `numpy.distutils`, and is therefore limited to
+python versions `<= 3.11` and compatible NumPy versions.
+
+
 
 Notes about building
 ====================

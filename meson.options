@@ -1,0 +1,3 @@
+option('openmp', type: 'combo', choices: ['none', 'gnu'], value: 'none')
+option('blas', type: 'combo', choices: ['scipy-openblas64', 'mkl'], value: 'mkl')
+

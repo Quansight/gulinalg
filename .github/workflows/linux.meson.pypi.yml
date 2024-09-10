@@ -1,0 +1,49 @@
+name: Linux pypi openblas64
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test_meson:
+    name: build and run tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        numpy-version: ["", "==1.26.4", "==1.24.4", "==1.22.4"]
+
+    steps:
+    - uses: actions/checkout@v4.1.1
+      with:
+        submodules: recursive
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Build and test gulinalg
+      shell: bash -l {0}
+      run: |
+        pip install numpy meson meson-python ninja scipy-openblas64
+
+        # pkg-config
+        python -c'import scipy_openblas64 as sc; print(sc.get_pkg_config())' > openblas.pc
+        export PKG_CONFIG_PATH=$PWD
+        echo "\n OpenBLAS PKG-CONFIG FILE\n"
+        cat openblas.pc
+
+        pip install .  -Csetup-args="-Dopenmp=gnu" -Csetup-args="-Dblas=scipy-openblas64" --no-build-isolation -v
+
+        # test
+        pip install numpy${{ matrix.numpy-version }}
+        cd /tmp
+        export OMP_NUM_THREADS=2
+        python -c'import numpy; print(f"{numpy.__version__ = }")'
+        python -c'import gulinalg as g; g.test(verbosity=2)'
+

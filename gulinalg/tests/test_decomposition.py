@@ -5,7 +5,7 @@ Tests different implementations of decomposition functions.
 from __future__ import print_function
 from unittest import TestCase, skipIf
 import numpy as np
-from numpy.testing import run_module_suite, assert_allclose
+from numpy.testing import assert_allclose
 from pkg_resources import parse_version
 import gulinalg
 
@@ -675,7 +675,7 @@ class TestLDL(TestCase):
         m = 10
         a = np.random.randn(n_batch, m, m)
         a = np.matmul(a, a.swapaxes(-2, -1))  # make symmetric
-        for workers in [1, ]:  # -1]:
+        for workers in [1, -1]:
             l, d = gulinalg.ldl(a, workers=workers)
             self._check_ldl(a, l, d)
 
@@ -685,10 +685,6 @@ class TestLDL(TestCase):
         m = 10
         a = np.random.randn(n_batch, m, m) + 1j * np.random.randn(n_batch, m, m)
         a = np.matmul(a, np.conj(a).swapaxes(-2, -1))  # make symmetric
-        for workers in [1, ]:  #  -1]:
+        for workers in [1, ]:  #  -1]:    # XXX https://github.com/Quansight/gulinalg/issues/12
             l, d = gulinalg.ldl(a, workers=workers)
             self._check_ldl(a, l, d)
-
-
-if __name__ == '__main__':
-    run_module_suite()
