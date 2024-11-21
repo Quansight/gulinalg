@@ -52,6 +52,60 @@ or use the standard `pytest` invocations.
 
 --------------------------------------------------------------------------------
 
+NumPy analogs
+=============
+
+This packages shares ancestry with `numpy.linalg`. In fact, about a half of
+the `gulinalg` functionality is also available from `numpy.linalg`. We recommend
+that existing users of `gulinalg` migrate to `numpy.linalg` using the following equivalence (NumPy functions below are from `np.linalg` namespace unless
+explicitly namespaced with `np.`)
+
+| `gulinalg`              | `np.linalg`                       |
+|:------------------------|:----------------------------------|
+| `matrix_multiply(a, b)` | `a @ b`, `np.matmul(a, b)`        |
+| `inner1d(a, b)`         | `vecdot(a.conj(), b)`             |
+| `dotc1d(a, b)`          | `vecdot(a, b)`                    |
+| `cholesky(a, b)`        | `cholesky(a, b)`                  |
+| `qr(a)`                 |  `qr(a)`                          |
+| `svd(a)`                |  `svd(a)`                         |
+| `solve(a, b)`           | `solve(a, b)`                     |
+| `inv(a, b)`             |  `inv(a, b)`                      |
+| `det(a, b)`             |  `det(a, b)`                      |
+| `slogdet(a, b)`         |  `slogdet(a, b)`                  |
+| `eig(a, b)`             |  `eig(a, b)`                      |
+| `eigh(a, b)`            |  `eigh(a, b)`                     |
+| `eigvals(a, b)`         |  `eigvals(a, b)`                  |
+| `eigvalsh(a, b)`        |  `eigvalsh(a, b)`                 |
+
+
+
+<!--| `matvec_multiply(a, b)` | `matvec(a, b)` (`numpy >= 2.2.0`) | -->
+
+A few things to keep in mind when porting from `gulinalg` to `np.linalg`:
+
+1. `np.linalg.vecdot` complex conjugates its first argument. Therefore for
+    complex-valued arguments it is equivalent to `gulinalg.dotc1d`, and for
+    real-valued arguments it is equivalent to `gulinalg.inner1d`.
+2. For matrix factorization, `gulinalg` functions return tuples of arrays, while
+   `np.linalg` analogs return namedtuples.
+3. For matrix factorizationsWhere the result is not unique (e.g., the
+  `QR`factorization is unique only up to a matching permutation of the rows of
+   the `Q` matrix and the columns of the `R` matrix),
+  `np.linalg` and `gulinalg` functions may return different, if equivalent, results.
+
+
+Several `gulinalg` functions have no direct NumPy equivalents but are simple
+to replicate manually, at least for 1D arguments:
+
+| `gulinalg`                | `np.linalg`                  |
+|:--------------------------|:-----------------------------|
+| `update_rank1(a, b, c)`   | `np.outer(a, b) + c`         |
+| `innerwt(a, b, c)`        | `np.linalg.vecdot(a * b, c)` |
+| `quadratic_form(a, b, c`) | `a.T @ b @ c`                |
+
+
+--------------------------------------------------------------------------------
+
 
 Below is the documentation for the older version of the package (v0.1.6).
 =========================================================================
