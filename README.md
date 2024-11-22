@@ -63,6 +63,7 @@ explicitly namespaced with `np.`)
 | `gulinalg`              | `np.linalg`                       |
 |:------------------------|:----------------------------------|
 | `matrix_multiply(a, b)` | `a @ b`, `np.matmul(a, b)`        |
+| `matvec_multiply(a, b)` | `np.matvec(a, b)` (`numpy >= 2.2.0`) |
 | `inner1d(a, b)`         | `vecdot(a.conj(), b)`             |
 | `dotc1d(a, b)`          | `vecdot(a, b)`                    |
 | `cholesky(a, b)`        | `cholesky(a, b)`                  |
@@ -79,8 +80,6 @@ explicitly namespaced with `np.`)
 
 
 
-<!--| `matvec_multiply(a, b)` | `matvec(a, b)` (`numpy >= 2.2.0`) | -->
-
 A few things to keep in mind when porting from `gulinalg` to `np.linalg`:
 
 1. `np.linalg.vecdot` complex conjugates its first argument. Therefore for
@@ -88,7 +87,8 @@ A few things to keep in mind when porting from `gulinalg` to `np.linalg`:
     real-valued arguments it is equivalent to `gulinalg.inner1d`.
 2. For matrix factorization, `gulinalg` functions return tuples of arrays, while
    `np.linalg` analogs return namedtuples.
-3. For matrix factorizationsWhere the result is not unique (e.g., the
+3. `np.matvec` and `np.vecmat` functions are new in NumPy version 2.2.0.
+4. For matrix factorizationsWhere the result is not unique (e.g., the
   `QR`factorization is unique only up to a matching permutation of the rows of
    the `Q` matrix and the columns of the `R` matrix),
   `np.linalg` and `gulinalg` functions may return different, if equivalent, results.
