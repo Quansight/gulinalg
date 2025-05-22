@@ -818,8 +818,8 @@ typedef struct linearize_data_struct
 
 static inline void
 init_linearize_data(LINEARIZE_DATA_t *lin_data,
-                    int rows,
-                    int columns,
+                    fortran_int rows,
+                    fortran_int columns,
                     ptrdiff_t row_strides,
                     ptrdiff_t column_strides)
 {
@@ -1213,7 +1213,7 @@ linearize_@TYPE@_matrix(void *dst_in,
     @typ@ *dst = (@typ@ *) dst_in;
 
     if (dst) {
-        int i, j;
+        fortran_int i, j;
         @typ@* rv = dst;
         fortran_int columns = (fortran_int)data->columns;
         fortran_int column_strides =
@@ -1267,7 +1267,7 @@ delinearize_@TYPE@_matrix(void *dst_in,
     @typ@ *dst = (@typ@ *) dst_in;
 
     if (src) {
-        int i;
+        fortran_int i;
         @typ@ *rv = src;
         fortran_int columns = (fortran_int)data->columns;
         fortran_int column_strides =
@@ -1319,7 +1319,7 @@ nan_@TYPE@_matrix(void *dst_in, const LINEARIZE_DATA_t* data)
 {
     @typ@ *dst = (@typ@ *) dst_in;
 
-    int i,j;
+    fortran_int i,j;
     for (i=0; i < data->rows; i++) {
         @typ@ *cp = dst;
         ptrdiff_t cs = data->column_strides/sizeof(@typ@);
@@ -1336,7 +1336,7 @@ zero_@TYPE@_matrix(void *dst_in, const LINEARIZE_DATA_t* data)
 {
     @typ@ *dst = (@typ@ *) dst_in;
 
-    int i,j;
+    fortran_int i,j;
     for (i=0; i < data->rows; i++) {
         @typ@ *cp = dst;
         ptrdiff_t cs = data->column_strides/sizeof(@typ@);
