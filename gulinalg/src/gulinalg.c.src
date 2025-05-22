@@ -1615,7 +1615,7 @@ static inline void
         /* use standard version */
         npy_intp is1=steps[0], is2=steps[1];
         BEGIN_OUTER_LOOP_3
-            int i;
+            fortran_int i;
             char *ip1=args[0], *ip2=args[1];
             @typ@ sum = @zero@;
             for (i = 0; i < dim; i++) {
@@ -2726,7 +2726,7 @@ static inline void
 {
     @typ@ acc_sign = *sign;
     @typ@ acc_logdet = @zero@;
-    int i;
+    fortran_int i;
     for (i = 0; i < m; i++) {
         @typ@ abs_element = *src;
         if (abs_element < @zero@) {
@@ -2782,7 +2782,7 @@ static inline void
                                       @typ@ *sign,
                                       @basetyp@ *logdet)
 {
-    int i;
+    fortran_int i;
     @typ@ sign_acc = *sign;
     @basetyp@ logdet_acc = @zero@;
 
@@ -2836,7 +2836,7 @@ static inline void
                               @basetyp@ *logdet)
 {
     fortran_int info = 0;
-    int i;
+    fortran_int i;
     /* note: done in place */
     LAPACK(@cblas_type@getrf)(&m, &m, (void *)src, &m, pivots, &info);
 
@@ -3746,7 +3746,7 @@ typedef struct sytr_params_struct
    #cblas_type=s,d#
  */
 static inline void
-@cblas_type@off_diag(@ftyp@ *dst, @ftyp@ *src, int n)
+@cblas_type@off_diag(@ftyp@ *dst, @ftyp@ *src, fortran_int n)
 {
     *dst = *src;
     dst += n-1;
@@ -3758,7 +3758,7 @@ static inline void
    #cblas_type=c,z#
  */
 static inline void
-@cblas_type@off_diag(@ftyp@ *dst, @ftyp@ *src, int n)
+@cblas_type@off_diag(@ftyp@ *dst, @ftyp@ *src, fortran_int n)
 {
     dst->r = src->r;
     dst->i = src->i;
@@ -3900,8 +3900,8 @@ static void
                 }
 
                 /* build 2x2 blocks and perform row interchanges */
-                int block = 0;
-                int j;
+                fortran_int block = 0;
+                fortran_int j;
                 for (i = 1, j = n - 1; i < n+1; i++, j--)
                 {
                     fortran_int ipiv = IPIV[j];
@@ -4120,7 +4120,7 @@ static void
                 }
 
                 /* Copy lower triangular matrix and set diagonal to 1. */
-                int j, l;
+                fortran_int j, l;
                 for (j = 0; j < k; j++) {
                     @ftyp@ *element = (@ftyp@ *)L + (m + 1) * j;
                     *element = *(@ftyp@*)&@cblas_type@_one;
@@ -4144,7 +4144,7 @@ static void
                 fortran_int one = 1;
                 fortran_int minus_one = -1;
                 if (!permute) {
-                    int *permutation_buf = (int*) calloc(m, sizeof(int));
+                    fortran_int *permutation_buf = (fortran_int*) calloc(m, sizeof(fortran_int));
                     if (permutation_buf == NULL) {
                         error_occurred = 1;
                         goto error;
@@ -4167,8 +4167,8 @@ static void
                     }
                     for (l = 0; l < k; ++l) {
                         /* IPIV indices start with 1 instead of 0 */
-                        int              t = IPIV[l] - 1;
-                        int            tmp = permutation_buf[l];
+                        fortran_int      t = IPIV[l] - 1;
+                        fortran_int    tmp = permutation_buf[l];
                         permutation_buf[l] = permutation_buf[t];
                         permutation_buf[t] = tmp;
                     }
@@ -4398,7 +4398,7 @@ static void
                 }
 
                 // Copy the upper triangular matrix.
-                int i, j;
+                fortran_int i, j;
                 for (j = 0; j < k; j++) {
                     for (i = j; i < n; i++) {
                         @ftyp@ *element = (@ftyp@ *)R + k * i + j;
