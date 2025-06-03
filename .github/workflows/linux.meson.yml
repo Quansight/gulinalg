@@ -23,14 +23,15 @@ jobs:
         submodules: recursive
 
     - name: Setup Conda
-      uses: conda-incubator/setup-miniconda@v3
+      uses: conda-incubator/setup-miniconda@v3.1.1
       with:
         python-version: ${{ matrix.python-version }}
         channels: conda-forge
+        conda-remove-defaults: "true"
         channel-priority: true
         activate-environment: gulinalg
         use-only-tar-bz2: false
-        miniforge-variant: Mambaforge
+        miniforge-variant: Miniforge3
         miniforge-version: latest
         use-mamba: true
 
