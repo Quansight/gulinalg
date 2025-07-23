@@ -42,7 +42,7 @@ jobs:
       shell: bash -l {0}
       run: |
         conda activate gulinalg
-        pip install numpy meson meson-python ninja mkl mkl-devel
+        pip install numpy${{ matrix.numpy-version }} meson meson-python ninja mkl mkl-devel
         mamba list
 
         # build

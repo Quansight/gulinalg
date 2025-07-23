@@ -30,7 +30,7 @@ jobs:
     - name: Build and test gulinalg
       shell: bash -l {0}
       run: |
-        pip install numpy meson meson-python ninja scipy-openblas64
+        pip install numpy${{ matrix.numpy-version }} meson meson-python ninja scipy-openblas64
 
         # pkg-config
         python -c'import scipy_openblas64 as sc; print(sc.get_pkg_config())' > openblas.pc
