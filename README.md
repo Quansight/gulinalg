@@ -104,7 +104,7 @@ to replicate manually, at least for 1D arguments:
 | `quadratic_form(a, b, c`) | `a.T @ b @ c`                |
 
 Not all of `gulinalg` is available from NumPy or is easy to replicate in pure Python. In these cases,
-the equivalent functionality is available from SciPy starting from version 1.17, with slight API
+equivalent functionality is available from SciPy starting from version 1.17, with slight API
 differences. Namely,
 
 | `gulinalg`                         | `scipy.linalg`                            |
