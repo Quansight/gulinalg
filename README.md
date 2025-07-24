@@ -109,9 +109,9 @@ differences. Namely,
 
 | `gulinalg`                         | `scipy.linalg`                            |
 |:-----------------------------------|:------------------------------------------|
-| `poinv(a)`                         | `inv(a, assume_a="pos"`                   |
-| `chosolve(a, b)`                   | `solve(a, b, assume_a="pos"`              |
-| `solve_triangular(a, b, UPLO="U")` | `solve(a, b, assume_a="upper triangular"` |
+| `poinv(a)`                         | `inv(a, assume_a="pos")`                  |
+| `chosolve(a, b)`                   | `solve(a, b, assume_a="pos")`            |
+| `solve_triangular(a, b, UPLO="U")` | `solve(a, b, assume_a="upper triangular")` |
 
 Also note that starting from version 1.17, `scipy.linalg` functions internally attempt at detecting
 the matrix structure and pick an appropriate algorithm. For instance, `solve(a, b)` with `a`
