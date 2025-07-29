@@ -52,8 +52,8 @@ or use the standard `pytest` invocations.
 
 --------------------------------------------------------------------------------
 
-NumPy analogs
-=============
+NumPy/SciPy analogs
+===================
 
 This packages shares ancestry with `numpy.linalg`. In fact, about a half of
 the `gulinalg` functionality is also available from `numpy.linalg`. We recommend
@@ -102,6 +102,24 @@ to replicate manually, at least for 1D arguments:
 | `update_rank1(a, b, c)`   | `np.outer(a, b) + c`         |
 | `innerwt(a, b, c)`        | `np.linalg.vecdot(a * b, c)` |
 | `quadratic_form(a, b, c`) | `a.T @ b @ c`                |
+
+Not all of `gulinalg` is available from NumPy or is easy to replicate in pure Python. In these cases,
+equivalent functionality is available from SciPy starting from version 1.17, with slight API
+differences. Namely,
+
+| `gulinalg`                         | `scipy.linalg`                            |
+|:-----------------------------------|:------------------------------------------|
+| `poinv(a)`                         | `inv(a, assume_a="pos")`                  |
+| `chosolve(a, b)`                   | `solve(a, b, assume_a="pos")`            |
+| `solve_triangular(a, b, UPLO="U")` | `solve(a, b, assume_a="upper triangular")` |
+
+Also note that starting from version 1.17, `scipy.linalg` functions internally attempt at detecting
+the matrix structure and pick an appropriate algorithm. For instance, `solve(a, b)` with `a`
+being an upper triangular matrix will automatically select a triangular solve algorithm. Supplying
+an explicit `assume_a` argument bypasses the structure detection. Strictly speaking, structure
+detection is not free, thus bypassing it may improve performance. Whether the improvement is substantial
+strongly depends on the matrix size, structure and the depth of the batch, and this should be
+evaluated on a case-by-case basis.
 
 
 --------------------------------------------------------------------------------
