@@ -85,10 +85,10 @@ A few things to keep in mind when porting from `gulinalg` to `np.linalg`:
 1. `np.linalg.vecdot` complex conjugates its first argument. Therefore for
     complex-valued arguments it is equivalent to `gulinalg.dotc1d`, and for
     real-valued arguments it is equivalent to `gulinalg.inner1d`.
-2. For matrix factorization, `gulinalg` functions return tuples of arrays, while
+2. For matrix factorizations, `gulinalg` functions return tuples of arrays, while
    `np.linalg` analogs return namedtuples.
 3. `np.matvec` and `np.vecmat` functions are new in NumPy version 2.2.0.
-4. For matrix factorizationsWhere the result is not unique (e.g., the
+4. For matrix factorizations, where the result is not unique (e.g., the
   `QR`factorization is unique only up to a matching permutation of the rows of
    the `Q` matrix and the columns of the `R` matrix),
   `np.linalg` and `gulinalg` functions may return different, if equivalent, results.
