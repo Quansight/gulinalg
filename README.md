@@ -55,7 +55,7 @@ or use the standard `pytest` invocations.
 NumPy/SciPy analogs
 ===================
 
-This packages shares ancestry with `numpy.linalg`. In fact, about a half of
+This package shares ancestry with `numpy.linalg`. In fact, about a half of
 the `gulinalg` functionality is also available from `numpy.linalg`. We recommend
 that existing users of `gulinalg` migrate to `numpy.linalg` using the following equivalence (NumPy functions below are from `np.linalg` namespace unless
 explicitly namespaced with `np.`)
