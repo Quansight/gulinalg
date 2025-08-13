@@ -102,7 +102,7 @@ to replicate manually, at least for 1D arguments:
 | `update_rank1(a, b, c)`   | `np.outer(a, b) + c`         |
 | `innerwt(a, b, c)`        | `np.linalg.vecdot(a * b, c)` |
 | `quadratic_form(a, b, c`) | `a.mT @ b @ c`               |
-|  `update_rankk(a, c)`     |  c + a @ a.mT`               |
+|  `update_rankk(a, c)`     |  `c + a @ a.mT`               |
 
 Not all of `gulinalg` is available from NumPy or is easy to replicate in pure Python. In these cases,
 equivalent functionality is available from SciPy starting from version 1.17, with slight API
