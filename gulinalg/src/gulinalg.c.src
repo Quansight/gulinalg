@@ -703,6 +703,18 @@ set_fp_invalid_or_clear(blasint error_occurred)
     }
 }
 
+
+static inline void
+report_no_memory()
+{
+    /* parrot https://github.com/numpy/numpy/pull/29811 */
+    NPY_ALLOW_C_API_DEF
+    NPY_ALLOW_C_API;
+    PyErr_NoMemory();
+    NPY_DISABLE_C_API;
+}
+
+
 /*
  *****************************************************************************
  **                      Some handy constants                               **
@@ -3032,7 +3044,7 @@ init_@lapack_func@(EIGH_PARAMS_t* params, char JOBZ, char UPLO,
     mem_buff = malloc(alloc_size);
 
     if (!mem_buff)
-        goto error;
+        goto no_memory;
     a = mem_buff;
     w = mem_buff + asize1 * omp_threads;
     LAPACK(@lapack_func@)(&JOBZ, &UPLO, &N,
@@ -3049,7 +3061,7 @@ init_@lapack_func@(EIGH_PARAMS_t* params, char JOBZ, char UPLO,
     liwork = query_iwork_size;
     mem_buff2 = malloc(lwork*sizeof(@typ@)*omp_threads + liwork*sizeof(fortran_int)*omp_threads);
     if (!mem_buff2)
-        goto error;
+        goto no_memory;
 
     work = mem_buff2;
     iwork = mem_buff2 + lwork*sizeof(@typ@)*omp_threads;
@@ -3072,6 +3084,9 @@ init_@lapack_func@(EIGH_PARAMS_t* params, char JOBZ, char UPLO,
     params->IWORK_size_bytes = liwork * sizeof(fortran_int);
 
     return 1;
+
+ no_memory:
+    report_no_memory();
 
  error:
     /* something failed */
@@ -3131,7 +3146,7 @@ init_@lapack_func@(EIGH_PARAMS_t *params,
 
     mem_buff = malloc(asize1 * omp_threads + wsize1*omp_threads);
     if (!mem_buff)
-        goto error;
+        goto no_memory;
     a = mem_buff;
     w = mem_buff + asize1 * omp_threads;
 
@@ -3152,7 +3167,7 @@ init_@lapack_func@(EIGH_PARAMS_t *params,
                        lrwork*sizeof(@basetyp@) * omp_threads +
                        liwork*sizeof(fortran_int) * omp_threads);
     if (!mem_buff2)
-        goto error;
+        goto no_memory;
     work = mem_buff2;
     rwork = work + lwork*sizeof(@typ@) * omp_threads;
     iwork = rwork + lrwork*sizeof(@basetyp@) * omp_threads;
@@ -3176,6 +3191,9 @@ init_@lapack_func@(EIGH_PARAMS_t *params,
     return 1;
 
     /* something failed */
+no_memory:
+    report_no_memory();
+
 error:
     memset(params, 0, sizeof(*params));
     free(mem_buff2);
@@ -3399,7 +3417,7 @@ init_@lapack_func@(GESV_PARAMS_t *params, fortran_int N, fortran_int NRHS,
                       params->B_size_bytes*omp_threads +
                       params->IPIV_size_bytes*omp_threads);
     if (!mem_buff)
-        goto error;
+        goto no_memory;
     a = mem_buff;
     b = a + params->A_size_bytes*omp_threads;
     ipiv = b + params->B_size_bytes*omp_threads;
@@ -3413,6 +3431,10 @@ init_@lapack_func@(GESV_PARAMS_t *params, fortran_int N, fortran_int NRHS,
     params->LDB = N;
 
     return 1;
+
+ no_memory:
+    report_no_memory();
+
  error:
     free(mem_buff);
     memset(params, 0, sizeof(*params));
@@ -3632,6 +3654,8 @@ init_@lapack_func@(POTR_PARAMS_t *params, char UPLO, fortran_int N,
 
     return 1;
  error:
+    report_no_memory();
+
     free(mem_buff);
     memset(params, 0, sizeof(*params));
 
@@ -3813,7 +3837,7 @@ init_@lapack_func@(SYTR_PARAMS_t *params, char UPLO, fortran_int N,
     mem_buff = malloc(a_size + d_size + ipiv_size + work_size);
 
     if (mem_buff == NULL)
-        goto error;
+        goto no_memory;
 
     params->A = mem_buff;
     params->D = mem_buff + a_size;
@@ -3829,6 +3853,10 @@ init_@lapack_func@(SYTR_PARAMS_t *params, char UPLO, fortran_int N,
     params->WORK_size_bytes = work_size1;
 
     return 1;
+
+ no_memory:
+    report_no_memory();
+
  error:
     free(mem_buff);
     memset(params, 0, sizeof(*params));
@@ -4307,6 +4335,7 @@ init_@lapack_func@(GEQRF_PARAMS_t *params, fortran_int M, fortran_int N,
     size_t work_size     = work_size1 * omp_threads;
     npy_uint8 *mem_buff = malloc(a_size + tau_size + work_size);
     if (mem_buff == NULL) {
+        report_no_memory();
         return 0;
     }
 
@@ -4622,7 +4651,7 @@ init_@lapack_func@(GEEV_PARAMS_t *params, char jobvl, char jobvr, fortran_int n,
                       vlr_size + vrr_size +
                       w_size + vl_size + vr_size) * omp_threads);
     if (!mem_buff)
-        goto error;
+        goto no_memory;
 
     a = mem_buff;
     wr = a + a_size * omp_threads;
@@ -4644,7 +4673,8 @@ init_@lapack_func@(GEEV_PARAMS_t *params, char jobvl, char jobvr, fortran_int n,
     work_count = (size_t)work_size_query;
     mem_buff2 = malloc(work_count*sizeof(@typ@) * omp_threads);
     if (!mem_buff2)
-        goto error;
+        goto no_memory;
+
     work = mem_buff2;
 
     params->A = a;
@@ -4674,6 +4704,10 @@ init_@lapack_func@(GEEV_PARAMS_t *params, char jobvl, char jobvr, fortran_int n,
     params->VR_size_bytes = vr_size;
 
     return 1;
+
+ no_memory:
+    report_no_memory();
+
  error:
     free(mem_buff2);
     free(mem_buff);
@@ -5199,7 +5233,7 @@ init_@lapack_func@(GESDD_PARAMS_t *params,
     mem_buff = malloc(a_size + s_size + u_size + vt_size + iwork_size);
 
     if (!mem_buff)
-        goto error;
+        goto no_memory;
 
     a = mem_buff;
     s = a + a_size;
@@ -5227,7 +5261,7 @@ init_@lapack_func@(GESDD_PARAMS_t *params,
 
     mem_buff2 = malloc(work_size);
     if (!mem_buff2)
-        goto error;
+        goto no_memory;
 
     work = mem_buff2;
 
@@ -5249,6 +5283,10 @@ init_@lapack_func@(GESDD_PARAMS_t *params,
     params->JOBZ = jobz;
 
     return 1;
+
+ no_memory:
+    report_no_memory();
+
  error:
     TRACE_TXT("%s failed init\n", __FUNCTION__);
     free(mem_buff);
@@ -5315,7 +5353,7 @@ init_@lapack_func@(GESDD_PARAMS_t *params,
                       rwork_size +
                       iwork_size);
     if (!mem_buff)
-        goto error;
+        goto no_memory;
 
     a = mem_buff;
     s = a + a_size;
@@ -5345,7 +5383,7 @@ init_@lapack_func@(GESDD_PARAMS_t *params,
 
     mem_buff2 = malloc(work_size);
     if (!mem_buff2)
-        goto error;
+        goto no_memory;
 
     work = mem_buff2;
 
@@ -5365,6 +5403,10 @@ init_@lapack_func@(GESDD_PARAMS_t *params,
     params->JOBZ = jobz;
 
     return 1;
+
+ no_memory:
+    report_no_memory();
+
  error:
     TRACE_TXT("%s failed init\n", __FUNCTION__);
     free(mem_buff2);
@@ -5886,6 +5928,8 @@ init_@lapack_func@(POTRS_PARAMS_t *params,
 
  error:
     printf("init allocation error\n");
+
+    report_no_memory();
     free(mem_buff);
     memset(params, 0, sizeof(*params));
 
@@ -6040,6 +6084,8 @@ static inline int init_@lapack_func@(TRTRI_PARAMS_t *params,
     size_t asize1 = N*N*sizeof(@ftyp@);
     npy_uint8 *mem_buff = malloc(asize1 * omp_threads);
     if (!mem_buff) {
+
+        report_no_memory();
         free(mem_buff);
         memset(params, 0, sizeof(*params));
         return 0;
@@ -6186,6 +6232,7 @@ init_@lapack_func@(TRTRS_PARAMS_t *params,
     b_size = b_size1 * omp_threads;
     mem_buff = malloc(a_size + b_size);
     if (!mem_buff) {
+        report_no_memory();
         free(mem_buff);
         memset(params, 0, sizeof(*params));
 
@@ -6375,6 +6422,7 @@ init_@potri@(POTRI_PARAMS_t *params,
     return 1;
 
  error:
+    report_no_memory();
     free(mem_buff);
     memset(params, 0, sizeof(*params));
 
